@@ -8,7 +8,26 @@ const cors = require('cors');
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors());
+
+const allowedOrigins = [
+    'http://localhost:5173/',
+    'https://shiny-top.vercel.app/',
+    // Add more allowed origins here
+];
+  
+const corsOptions = {
+    origin: (origin, callback) => {
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+  
+app.use(cors(corsOptions)); 
 
 const db = new sqlite3.Database('Quema.db');
 const JWT_SECRET = process.env.JWT_SECRET; 
